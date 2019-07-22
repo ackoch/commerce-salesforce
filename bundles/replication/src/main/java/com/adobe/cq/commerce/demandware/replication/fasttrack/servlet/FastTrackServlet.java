@@ -16,6 +16,7 @@
 
 package com.adobe.cq.commerce.demandware.replication.fasttrack.servlet;
 
+import com.day.cq.replication.Agent;
 import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationOptions;
 import com.day.cq.replication.Replicator;
@@ -53,8 +54,8 @@ public class FastTrackServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         String path = request.getParameter("path");
         String instanceId = request.getParameter("instanceId");
-        if (path == null || instanceId == null) {
-            response.getWriter().write("Failed: no path/instanceId parameter");
+        if (path == null) {
+            response.getWriter().write("Failed: no path parameter");
             return;
         }
         replicate(path, instanceId);
@@ -68,14 +69,23 @@ public class FastTrackServlet extends SlingSafeMethodsServlet {
             options.setSynchronous(true);
             options.setSuppressStatusUpdate(false);
 
-            String agentId = String.format(DEMANDWARE_FT_AGENT_ID, instanceId);
-            options.setFilter(agent -> agent.getId().equalsIgnoreCase(agentId));
+            options.setFilter(agent -> isFastTrackAgent(agent, instanceId));
 
             replicator.replicate(getSession(), ReplicationActionType.ACTIVATE, path, options);
         }
         catch(Exception e) {
             LOG.error("Failed to replicate", e);
         }
+    }
+
+    private boolean isFastTrackAgent(final Agent agent, final String instanceId) {
+        if (instanceId != null) {
+            String specificAgentId = String.format(DEMANDWARE_FT_AGENT_ID, instanceId);
+            return agent.getId().equalsIgnoreCase(specificAgentId);
+        }
+
+        //if no specific instanceId provided - all fast track agents should be called
+        return agent.getId().contains("demandware-ft");
     }
 
     private Session getSession() throws LoginException {
