@@ -22,6 +22,8 @@
     <filter root="/etc/replication/agents.author/demandware-sitegenesis"/>
     <filter root="/etc/replication/agents.author/demandware-us-sitegenesis"/>
     <filter root="/etc/replication/agents.author/demandware-eu-sitegenesis"/>
+    <filter root="/etc/replication/agents.author/demandware-ft-eu-sitegenesis"/>
+    <filter root="/etc/replication/agents.author/demandware-ft-us-sitegenesis"/>
 
     <filter root="/home/users/system/demandware/dwre-replication-agent-sitegenesis"/>
     <filter root="/home/users/system/demandware/dwre-replication-agent-us-sitegenesis"/>
